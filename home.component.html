@@ -1,0 +1,65 @@
+<div class="controls">
+    <div class="controls-group">
+        <button class="btn primary" (click)="loadLimitedProducts(5)">Load 5 Products</button>
+        <button class="btn primary" (click)="showAddProductForm()">Add New Product</button>
+    </div>
+    <div class="controls-group">
+        <select class="select" (change)="sortProducts($event)">
+            <option value="" selected>Sort by Price</option>
+            <option value="lowToHigh">Low to High</option>
+            <option value="highToLow">High to Low</option>
+        </select>
+        <select class="select" (change)="filterByCategory($event)">
+            <option value="" selected>Filter by Category</option>
+            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+        </select>
+    </div>
+</div>
+
+<!-- Add/Edit Product Modal -->
+<div *ngIf="addingProduct || editingProduct" class="modal-overlay">
+    <div class="modal">
+        <h3>{{ addingProduct ? 'Add New Product' : 'Edit Product' }}</h3>
+        <form (ngSubmit)="addingProduct ? addProduct() : updateProduct()">
+            <label for="title">Title:</label>
+            <input id="title" [(ngModel)]="newProduct.title" name="title" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" [(ngModel)]="newProduct.description" name="description" required></textarea>
+
+            <label for="price">Price:</label>
+            <input id="price" type="number" [(ngModel)]="newProduct.price" name="price" required>
+
+            <label for="category">Category:</label>
+            <input id="category" [(ngModel)]="newProduct.category" name="category" required>
+
+            <label for="image">Image URL:</label>
+            <input id="image" [(ngModel)]="newProduct.image" name="image" required>
+
+            <div class="form-actions">
+                <button type="submit" class="btn primary">{{ addingProduct ? 'Add Product' : 'Update Product' }}</button>
+                <button type="button" class="btn secondary" (click)="cancelAdd()">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Product Grid -->
+<div *ngIf="products.length > 0; else loading" class="product-grid">
+    <div *ngFor="let product of products" class="product-card">
+        <div class="image-container">
+            <img [src]="product.image" alt="{{ product.title }}" class="product-image">
+        </div>
+        <h2 class="product-title">{{ product.title }}</h2>
+        <p class="product-price">$ {{ product.price }}</p>
+        <div class="actions">
+            <button class="btn primary" (click)="addToCart(product.id)">Add to Cart</button>
+            <button class="btn secondary" (click)="getProductDetails(product.id)">View Details</button>
+            <button class="btn tertiary" (click)="editProduct(product)">Edit</button>
+        </div>
+    </div>
+</div>
+
+<ng-template #loading>
+    <p>Loading products...</p>
+</ng-template>
